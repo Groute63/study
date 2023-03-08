@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class JdbcStudentRepository implements StudentRepository {
         student.setNumber(rs.getInt("number"));
         return student;
     };
-
+    //Тут в идеале передалть все на : и map.of
     @Override
     public int count() {
         return jdbcTemplate.queryForObject("select count(*) from public.students", Integer.class);
@@ -37,8 +38,9 @@ public class JdbcStudentRepository implements StudentRepository {
 
     @Override
     public List<Student> findAllByName(String name) {
-        return namedParameterJdbcTemplate.query("select * from public.students where name ilike '%' || :name || '%'",
-                Collections.singletonMap("name", name), studentMapper);
+        int id = 2;
+        return namedParameterJdbcTemplate.query("select * from public.students where name like '%' ||:name || '%' and id = :id",
+               Map.of("name",name,"id",id) , studentMapper);
     }
 
     @Override
